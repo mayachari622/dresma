@@ -38,7 +38,7 @@ def read_csv(csv_file):
 
     return label_tag_dict
 
-read_csv('/Users/mayachari/Downloads/RunningShoes.xlsm - Valid Values.csv')
+# read_csv('/Users/mayachari/Downloads/RunningShoes.xlsm - Valid Values.csv')
 
 st.title("Extracting Labels and Tags from csv")
 
