@@ -1,8 +1,8 @@
 # convert the tags to embeddings
 # Copyright 2023 Google LLC.
 # SPDX-License-Identifier: Apache-2.0
-from absl import app
-from absl import flags
+# from absl import app
+# from absl import flags
 import base64
 # Need to do pip install google-cloud-aiplatform for the following two imports.
 # Also run: gcloud auth application-default login.
