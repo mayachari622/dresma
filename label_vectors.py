@@ -42,7 +42,7 @@ def read_csv(csv_file):
 
 st.title("Extracting Labels and Tags from csv")
 
-input1 = st.text_input("Enter path to csv: ")
+file_path = st.file_uploader("Enter path to csv: ")
 if st.button("Run"):
-    read_csv(input1)
+    read_csv(file_path)
     
