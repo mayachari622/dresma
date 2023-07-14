@@ -13,7 +13,9 @@ import time
 import typing
 import os
 import label_vectors
+import time
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"]="vertex-production-391117-356ba2e4d7af.json"
+
 
 # define a named tuple to hold the text and the image embeddings
 class EmbeddingResponse(typing.NamedTuple):
@@ -61,7 +63,28 @@ label_dict = label_vectors.read_csv('/Users/mayachari/Downloads/RunningShoes.xls
 print(type(label_dict))
 
 embeddings_dict = {}
+
+def run_loop(iterations, max_iterations_per_minute, label_dict):
+    interval = 60 / max_iterations_per_minute
+
+    for i in range(iterations):
+        for key, val in label_dict.items():
+            vector_embedding = []
+            for s in val:
+                embeddings = client.get_embedding_mod(text = s)
+                vector_embedding.append(embeddings)
+            embeddings_dict[key] = vector_embedding
+
+        for key, embeddings in embeddings_dict.items():
+            print(f"Embeddings for '{key}': {embeddings}")
+
+
+        time.sleep(interval)
+
+# run_loop(len(label_dict.items()), 10, label_dict)
+
 count = 0
+## without the time loop
 for key, val in label_dict.items():
     vector_embedding = []
     for s in val:
@@ -69,15 +92,14 @@ for key, val in label_dict.items():
         vector_embedding.append(embeddings)
     embeddings_dict[key] = vector_embedding
     count = count + 1
-    if (count == 3):
+    if (count > 3):
         break;
 
 for key, embeddings in embeddings_dict.items():
     print(f"Embeddings for '{key}': {embeddings}")
 
-# response = client.get_embedding(text='', image_bytes=image_file_contents)
+
 end = time.time()
-# print(response)
+
 print('Time taken: ', end - start)
-# if __name__ == "__main__":
-#     app.run(main)
+
