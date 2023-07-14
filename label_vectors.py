@@ -1,4 +1,5 @@
 import csv
+import streamlit as st
 
 # function that takes in a path to a csv file and outputs a dictionary where the 
 # keys are labels and the values are a list of tags associated with that label
@@ -34,8 +35,14 @@ def read_csv(csv_file):
             # add this row of the csv to the output dictionary
             label_tag_dict[label] = tags
 
+
     return label_tag_dict
 
+read_csv('/Users/mayachari/Downloads/RunningShoes.xlsm - Valid Values.csv')
 
-        
+st.title("Extracting Labels and Tags from csv")
 
+input1 = st.text_input("Enter path to csv: ")
+if st.button("Run"):
+    read_csv(input1)
+    
