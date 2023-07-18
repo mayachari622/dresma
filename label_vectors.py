@@ -1,10 +1,11 @@
 import csv
+import pandas as pd
 import streamlit as st
 
 # function that takes in a path to a csv file and outputs a dictionary where the 
 # keys are labels and the values are a list of tags associated with that label
 
-def read_csv(csv_file):
+def read_csv_df(csv_file):
     # initialize dictionary
     label_tag_dict = {}
 
@@ -35,16 +36,34 @@ def read_csv(csv_file):
             # add this row of the csv to the output dictionary
             label_tag_dict[label] = tags
 
+        # convert the dictionary to a dataframe
+        label_tag_df = pd.DataFrame(columns=['label', 'tag', 'embedding'])
 
-    return label_tag_dict
+        # iterate through the dictionary to populate the dataframe
+        for key, value in label_tag_dict.items():
+            # iterate through each tag in the dictionary
+            for s in value:
+                # each row in the dataframe is label-tag-embedding
+                new_entry = [key, s, None]
+                label_tag_df = pd.concat([label_tag_df, pd.DataFrame([new_entry], columns=label_tag_df.columns)], ignore_index=True)
 
-# read_csv('/Users/mayachari/Downloads/RunningShoes.xlsm - Valid Values.csv')
+    return label_tag_df
 
+# streamlit code
 st.title("Extracting Labels and Tags from csv")
 
-file = st.file_uploader("Enter path to csv: ")
+path_to_csv = st.text_input("Enter the path (from root) to the csv that you are uploading")
+file = st.file_uploader("Choose csv file from your computer: ")
 if st.button("Run"):
     file_path = file.name
-    read_csv(file_path)
+    final_path = path_to_csv + file_path
+    st.write(final_path)
+    ldict = read_csv_df(final_path)
+    st.write(ldict)
+
+# path_to_csv: '/Users/mayachari/Downloads/'
+# file uploader (filename): RunningShoes.xlsm - Valid Values.csv
+# full path: '/Users/mayachari/Downloads/RunningShoes.xlsm - Valid Values.csv'
+
     
     
