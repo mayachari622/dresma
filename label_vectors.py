@@ -1,12 +1,17 @@
+from embeddings import EmbeddingPredictionClient
 import csv
 import pandas as pd
 import streamlit as st
+from embeddings import EmbeddingPredictionClient
+from embeddings import EmbeddingPredictionClient
+
 
 # function that takes in a path to a csv file and outputs a dictionary where the 
 # keys are labels and the values are a list of tags associated with that label
 
 def read_csv_df(csv_file):
     # initialize dictionary
+    print('inside csv func')
     label_tag_dict = {}
 
     # open the csv
@@ -49,19 +54,47 @@ def read_csv_df(csv_file):
 
     return label_tag_df
 
+def label_tag_embeddings(label_tag_df):
+    print('inside of function')
+    client = EmbeddingPredictionClient(project='vertex-production-391117')
+    
+    count = 0
+    for index, row in label_tag_df.iterrows():
+        embedded_output = []
+        string_to_embed = row[1] + 'is the predominant' + row[0] + 'in the shoe'
+        embedded_output= client.get_embedding_mod(text = string_to_embed)
+        label_tag_df.loc[index, 'embedding'] = embedded_output
+        print(embedded_output)
+        count = count + 1
+        if count > 50:
+            break;
+    print(label_tag_df)
+    return label_tag_df
+
+
+
 # streamlit code
 st.title("Extracting Labels and Tags from csv")
 
 path_to_csv = st.text_input("Enter the path (from root) to the csv that you are uploading")
 file = st.file_uploader("Choose csv file from your computer: ")
-if st.button("Run"):
+
+dataframe_button_clicked = st.button("Generate Dataframe")
+
+label_tag_df = None
+
+if dataframe_button_clicked:
     file_path = file.name
     final_path = path_to_csv + file_path
     st.write(final_path)
-    ldict = read_csv_df(final_path)
-    st.write(ldict)
+    label_tag_df = read_csv_df(final_path)
+    st.write(label_tag_df)
 
-# path_to_csv: '/Users/mayachari/Downloads/'
+    df_with_embeddings = label_tag_embeddings(label_tag_df)
+    st.write(df_with_embeddings)
+
+
+# path_to_csv: /Users/mayachari/Downloads/
 # file uploader (filename): RunningShoes.xlsm - Valid Values.csv
 # full path: '/Users/mayachari/Downloads/RunningShoes.xlsm - Valid Values.csv'
 

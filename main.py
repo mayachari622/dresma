@@ -3,42 +3,21 @@ from embeddings import EmbeddingPredictionClient
 import label_vectors
 import time
 
-# def run_main(csv_file):
-    
-#     # client can be reused.
-#     client = EmbeddingPredictionClient(project='vertex-production-391117')
-#     # start = time.time()
-#     # create label dictionary
-#     label_dict = label_vectors.read_csv(csv_file)
-
-#     embeddings_dict = {}
-
-#     # only run the embeddings for three labels and tags
-
-#     for key, val in label_dict.items():
-#         vector_embedding = []
-#         for s in val:
-#             # "Value" is the predominant "label" in the "product category".
-#             embed = s + 'is the predominant' + key + 'in the shoe'
-#             embeddings = client.get_embedding_mod(text = embed)
-#             vector_embedding.append(embeddings)
-#         embeddings_dict[key] = vector_embedding
-
-
-#     return embeddings_dict
-
-# run_main('/Users/mayachari/Downloads/RunningShoes.xlsm - Valid Values.csv')
-
-
-# function that will iterate through every row in the dataframe
+# function that will iterate through every row in the dataframe and 
+# put each label-tag embedding in the third column of the dataframe
 def label_tag_embeddings(label_tag_df):
     client = EmbeddingPredictionClient(project='vertex-production-391117')
 
+    # count = 0
     for index, row in label_tag_df.iterrows():
+        embedded_output = []
         string_to_embed = row[1] + 'is the predominant' + row[0] + 'in the shoe'
         embedded_output= client.get_embedding_mod(text = string_to_embed)
-        label_tag_df.at[index, 2] = embedded_output
-        print(row)
+        label_tag_df.loc[index, 'embedding'] = embedded_output
+        count = count + 1
+        # if count > 50:
+        #     break;
+    
 
     print(label_tag_df)
     return label_tag_df

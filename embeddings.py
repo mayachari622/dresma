@@ -14,7 +14,6 @@ import sys
 import time
 import typing
 import os
-import label_vectors
 import time
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"]="vertex-production-391117-356ba2e4d7af.json"
 
@@ -54,7 +53,4 @@ class EmbeddingPredictionClient:
         text_embedding = [v for v in text_emb_value]
         return text_embedding
     
-# with open('196_196.jpg', "rb") as f:
-#     image_file_contents = f.read()
-
 
