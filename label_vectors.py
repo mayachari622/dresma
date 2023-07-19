@@ -55,20 +55,25 @@ def read_csv_df(csv_file):
     return label_tag_df
 
 def label_tag_embeddings(label_tag_df):
-    print('inside of function')
+    # create an instance of the EmbeddingPredictionClient class
     client = EmbeddingPredictionClient(project='vertex-production-391117')
     
+    # counter variable that keeps track of how many calls are being made to the API
     count = 0
     for index, row in label_tag_df.iterrows():
         embedded_output = []
         string_to_embed = row[1] + 'is the predominant' + row[0] + 'in the shoe'
-        embedded_output= client.get_embedding_mod(text = string_to_embed)
+        # get embedding for string
+        embedded_output = client.get_embedding_mod(text = string_to_embed)
+        # put embedding list into the dataframe
         label_tag_df.loc[index, 'embedding'] = embedded_output
-        print(embedded_output)
+        
+        # after 50 rows of the dataframe are filled, break out of loop
         count = count + 1
         if count > 50:
             break;
-    print(label_tag_df)
+    
+    # return the edited dataframe
     return label_tag_df
 
 
