@@ -39,7 +39,7 @@ class EmbeddingPredictionClient:
     def get_embedding_mod(self, text: str = None):
         if not text:
             raise ValueError('Text must be specified.')
-        #
+
         instance = struct_pb2.Struct()
         instance.fields['text'].string_value = text
         instances = [instance]
