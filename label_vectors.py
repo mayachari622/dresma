@@ -1,9 +1,44 @@
 from embeddings import EmbeddingPredictionClient
 import csv
 import pandas as pd
+import io
 import streamlit as st
 from embeddings import EmbeddingPredictionClient
 from embeddings import EmbeddingPredictionClient
+
+# function that doesn't use path
+def create_df(csv_file):
+    print('inside of create_df function')
+
+    # convert file to a pandas dataframe
+    dataframe = pd.read_csv(csv_file)
+
+    # create new dataframe (result dataframe where the unique identifier is label-tag)
+    label_tag_df = pd.DataFrame(columns=['label', 'tag', 'embedding'])
+
+    # the labels are in the 2nd column of the dataframe (index 1)
+    label_column_index = 1
+
+    # iterate through the dataframe rows
+    for index, row in dataframe.iterrows():
+        label = row[label_column_index]
+        if (label == ""):
+            continue;
+        # iterate through the columns of each row
+        # for column, value in row.items():
+        for column_idx, (column, value) in enumerate(row.items()):
+            if (column_idx < 2):
+                continue;
+            if pd.isna(value):
+                break;
+            if (value != ""):
+                new_entry = [label, value, None]
+                label_tag_df = pd.concat([label_tag_df, pd.DataFrame([new_entry], columns=label_tag_df.columns)], ignore_index=True)
+
+    return label_tag_df
+
+    
+    print('end of create_df function')
 
 
 # function that takes in a path to a csv file and outputs a dictionary where the 
@@ -11,7 +46,6 @@ from embeddings import EmbeddingPredictionClient
 
 def read_csv_df(csv_file):
     # initialize dictionary
-    print('inside csv func')
     label_tag_dict = {}
 
     # open the csv
@@ -79,24 +113,32 @@ def label_tag_embeddings(label_tag_df):
 
 
 # streamlit code
-st.title("Extracting Labels and Tags from csv")
+st.title("Generating Embeddings From csv File")
 
 path_to_csv = st.text_input("Enter the path (from root) to the csv that you are uploading")
 file = st.file_uploader("Choose csv file from your computer: ")
 
 dataframe_button_clicked = st.button("Generate Dataframe")
 
-label_tag_df = None
 
 if dataframe_button_clicked:
-    file_path = file.name
-    final_path = path_to_csv + file_path
-    st.write(final_path)
-    label_tag_df = read_csv_df(final_path)
-    st.write(label_tag_df)
+    # if a path is NOT inputted
+    if (len(path_to_csv) == 0):
+        label_tag_df = create_df(file)
+        st.write(label_tag_df)
 
-    df_with_embeddings = label_tag_embeddings(label_tag_df)
-    st.write(df_with_embeddings)
+        df_with_embeddings = label_tag_embeddings(label_tag_df)
+        st.write(df_with_embeddings)
+    # if a path IS inputted
+    else:
+        file_path = file.name
+        final_path = path_to_csv + file_path
+        st.write(final_path)
+        label_tag_df = read_csv_df(final_path)
+        st.write(label_tag_df)
+
+        df_with_embeddings = label_tag_embeddings(label_tag_df)
+        st.write(df_with_embeddings)
 
 
 # path_to_csv: /Users/mayachari/Downloads/
