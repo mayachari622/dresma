@@ -70,7 +70,7 @@ def label_tag_embeddings(label_tag_df):
         
         # after 50 rows of the dataframe are filled, break out of loop
         count = count + 1
-        if count > 50:
+        if count > 1:
             break;
     
     # return the edited dataframe
