@@ -59,6 +59,7 @@ def generate_embeddings(csv_file):
 
         if (i + 1) * calls_per_minute < total_api_calls:
             print(f"Waiting for 1 minute before the next set of API calls...")
+            st.write("Waiting for 1 minute before the next set of API calls...")
             time.sleep(60)  # Wait for 1 minute before making the next set of API calls
     
     directory_path = "dataframes"
