@@ -46,11 +46,36 @@ class EmbeddingPredictionClient:
 
         endpoint = (f"projects/{self.project}/locations/{self.location}"
         "/publishers/google/models/multimodalembedding@001")
-        response = self.client.predict(endpoint=endpoint, instances=instances)
+        response = self.client.predict(endpoint=endpoint, instances=instances, parameters = {"useDeprecated1024Model":True})
 
         text_embedding = None
         text_emb_value = response.predictions[0]['textEmbedding']
         text_embedding = [v for v in text_emb_value]
         return text_embedding
+    def get_embedding(self, text: str = None, image_bytes: bytes = None):
+        if not text and not image_bytes:
+            raise ValueError('At least one of text or image_bytes must be specified.')
+        instance = struct_pb2.Struct()
+        if text:
+            instance.fields['text'].string_value = text
+        if image_bytes:
+            encoded_content = base64.b64encode(image_bytes).decode("utf-8")
+            image_struct = instance.fields['image'].struct_value
+            image_struct.fields['bytesBase64Encoded'].string_value = encoded_content
+        instances = [instance]
+        endpoint = (f"projects/{self.project}/locations/{self.location}"
+                    "/publishers/google/models/multimodalembedding@001")
+        response = self.client.predict(endpoint=endpoint, instances=instances, parameters = {"useDeprecated1024Model":True})
+        text_embedding = None
+        if text:
+            text_emb_value = response.predictions[0]['textEmbedding']
+            text_embedding = [v for v in text_emb_value]
+        image_embedding = None
+        if image_bytes:
+            image_emb_value = response.predictions[0]['imageEmbedding']
+            image_embedding = [v for v in image_emb_value]
+        return EmbeddingResponse(
+            text_embedding=text_embedding,
+            image_embedding=image_embedding)
     
 
