@@ -6,8 +6,8 @@ import ast
 import streamlit as st
 from embeddings import EmbeddingPredictionClient
 from embeddings import EmbeddingPredictionClient
-from openai.embeddings_utils import get_embedding, cosine_similarity
 import openai
+from openai.embeddings_utils import get_embedding, cosine_similarity
 from embedding_vector import dummy_embedding
 from embedding_vector import shoe_embedding
 import time
