@@ -74,6 +74,7 @@ def generate_embeddings(csv_file):
     # Save the DataFrame as a CSV file
     label_tag_df.to_csv(full_path, index=False)
     print('done')
+
     
     # # # return the edited dataframe
     return label_tag_df
@@ -355,9 +356,7 @@ label_tag_csv = st.file_uploader('Input label tag csv with embeddings already ge
 
 dataframe_button_clicked = st.button("Generate Dataframe")
 
-image_button_clicked = st.button("Match Image")
-
-embedding_button_clicked = st.button("embedding button")
+embedding_button_clicked = st.button("Match Image")
 
 label_tag_df = None
 
@@ -368,13 +367,7 @@ if dataframe_button_clicked:
     # the dataframe as a csv
     label_tag_df = generate_embeddings(file)
     st.write(label_tag_df)
-
-if image_button_clicked:
-    # function to get embedding for image
-    image_embedding = image_embeddings(image_file)
-
-    # function to match image embedding 
-    label_tag_df = match_score(label_tag_df, image_embedding)
+    st.download_button("Download CSV", label_tag_df, "text/csv")
 
 if embedding_button_clicked:
 
