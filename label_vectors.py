@@ -62,19 +62,19 @@ def generate_embeddings(csv_file):
             st.write("Waiting for 1 minute before the next set of API calls...")
             time.sleep(60)  # Wait for 1 minute before making the next set of API calls
     
-    directory_path = "dataframes"
+    # directory_path = "dataframes"
     
-    if not os.path.exists(directory_path):
-        print('inside if statement')
-        os.makedirs(directory_path)
+    # if not os.path.exists(directory_path):
+    #     print('inside if statement')
+    #     os.makedirs(directory_path)
         
-    # Construct the full path including the filename
-    full_path = os.path.join(directory_path, 'label_tag_embeddings.csv')
-    print(full_path)
+    # # Construct the full path including the filename
+    # full_path = os.path.join(directory_path, 'label_tag_embeddings.csv')
+    # print(full_path)
 
-    # Save the DataFrame as a CSV file
-    label_tag_df.to_csv(full_path, index=False)
-    print('done')
+    # # Save the DataFrame as a CSV file
+    # label_tag_df.to_csv(full_path, index=False)
+    # print('done')
 
     
     # # # return the edited dataframe
@@ -347,6 +347,12 @@ def fix_label_tag_embedding_df(label_tag_embedding_csv):
     print('done!')
     return label_tag_df
 
+@st.cache
+def convert_df(df):
+    # IMPORTANT: Cache the conversion to prevent computation on every rerun
+    return df.to_csv().encode('utf-8')
+
+
 
 # streamlit code
 st.title("Generating Embeddings From csv File")
@@ -368,7 +374,13 @@ if dataframe_button_clicked:
     # the dataframe as a csv
     label_tag_df = generate_embeddings(file)
     st.write(label_tag_df)
-    st.download_button("Download CSV", label_tag_df, "text/csv")
+    csv = convert_df(label_tag_df)
+
+    st.download_button(
+        label="Download CSV", 
+        data=csv, 
+        file_name='label_tag_embeddings.csv',
+        mime="text/csv")
 
 if embedding_button_clicked:
 
