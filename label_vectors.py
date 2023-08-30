@@ -96,8 +96,6 @@ def image_embeddings(image_file):
 
     end = time.time()
 
-    img = Image.open(image_file.name)
-    img
     print('Time taken: ', end - start)
     return response.image_embedding
 
