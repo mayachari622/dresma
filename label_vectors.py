@@ -108,7 +108,7 @@ def match_score(label_tag_df, image_embedding):
     # from the label until the next label (generate the list)
     indices = []
     for index, row in label_tag_df.iterrows():
-        if isinstance(row[0], str):
+        if isinstance(row[1], str):
                 indices.append(index)
 
     total_rows = len(label_tag_df)
