@@ -82,15 +82,17 @@ def generate_embeddings(csv_file):
 
 # function that generates the image embeddings
 def image_embeddings(image_file):
-    with open(image_file.name, "rb") as f:
-        image_file_contents = f.read() 
+    # with open(image_file.name, "rb") as f:
+    #     image_file_contents = f.read() 
+
+    bytes_data = image_file.getvalue()
 
     # client can be reused.
     client = EmbeddingPredictionClient(project='vertex-production-391117')
 
     start = time.time()
 
-    response = client.get_embedding(text='', image_bytes=image_file_contents)
+    response = client.get_embedding(text='', image_bytes=bytes_data)
 
     end = time.time()
 
